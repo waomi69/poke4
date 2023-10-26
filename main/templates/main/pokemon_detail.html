@@ -1,0 +1,40 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    {{ pokemon.name }}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="{{ pokemon.png }}" class="img-fluid" alt="{{ pokemon.name }}" style="width: 60%; height: auto;">
+            </div>
+            <div class="col-md-6">
+                <h2>{{ pokemon.name }}</h2>
+                <p><strong>Attack:</strong> {{ pokemon.attack }}</p>
+                <p><strong>HP:</strong> {{ pokemon.hp }}</p>
+                <p><strong>Weight:</strong> {{ pokemon.weight }}</p>
+                <p><strong>Height:</strong> {{ pokemon.height }}</p>
+                <p class="card-text">
+                    <strong>Abilities:</strong>
+                    {% with abilities_string="" %}
+                        {% for ability_group in pokemon.abilities %}
+                            {% for ability in ability_group %}
+                                {% if not forloop.first %}, {% endif %}
+                                <span>{{ ability.0 }}</span>
+                            {% endfor %}
+                        {% endfor %}
+                    {% endwith %}
+                    {{ abilities_string }}
+                </p>
+                <a href="{% url 'fight' pokemon.name %}" >В бой</a>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+{% endblock %}

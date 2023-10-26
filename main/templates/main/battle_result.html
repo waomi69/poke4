@@ -1,0 +1,53 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+    {#    {{ title }}#}
+    fight
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <h2>Результат боя</h2>
+        {% if user_hp > opponent_hp %}
+            <h2 class="text-success mt-3">Вы победили!</h2>
+        {% else %}
+            <h2 class="text-danger mt-3">Противник победил.</h2>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    {% if user_pokemon.png %}
+                        <img src="{{ user_pokemon.png }}" class="card-img-top" alt="{{ user_pokemon.name }}"
+                             style="width: 40%; height: auto;">
+                    {% else %}
+                        <img src="{% static 'pokemon.svg' %}" class="card-img-top" alt="{{ user_pokemon.name }}"
+                             style="width: 40%; height: auto;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">Ваш покемон: {{ user_pokemon.name }}</h5>
+                        <p>Ваша атака: {{ user_attack }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    {% if opponent_pokemon.png %}
+                        <img src="{{ opponent_pokemon.png }}" class="card-img-top" alt="{{ opponent_pokemon.name }}"
+                             style="width: 40%; height: auto;">
+                    {% else %}
+                        <img src="{% static 'pokemon.svg' %}" class="card-img-top" alt="{{ opponent_pokemon.name }}"
+                             style="width: 40%; height: auto;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">Противник: {{ opponent_pokemon.name }}</h5>
+                        <p>Атака противника: {{ opponent_attack }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <a href="{% url 'home' %}" >Начать новый бой</a>
+    </div>
+{% endblock %}

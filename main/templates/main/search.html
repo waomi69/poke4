@@ -1,0 +1,45 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+{#    {{ title }}#}
+Search result
+{% endblock %}
+{% block content %}
+<form method="get" class="d-flex justify-content-between align-items-center">
+    <input type="text" name="search" class="form-control" placeholder="...">
+    <button type="submit" >Поиск</button>
+</form>
+
+{% if pokemon.name %}
+<div class="col-md-4 mb-4">
+    <div class="card">
+        <a href="{% url 'pokemon_detail' pokemon.name %}">
+            {% if pokemon.png %}
+            <img src="{{ pokemon.png }}" class="card-img-top" alt="{{ pokemon.name }}">
+            {% else %}
+            <img src="{% static 'pokemon.svg' %}" class="card-img-top" alt="{{ pokemon.name }}">
+
+            {% endif %}
+        </a>
+        <div class="card-body">
+            <h5 class="card-title">{{ pokemon.name }}</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="card-text"><strong>Attack:</strong> {{ pokemon.attack }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p class="card-text"><strong>HP:</strong> {{ pokemon.hp }}</p>
+                </div>
+            </div>
+
+            <a href="{% url 'fight' pokemon.name %}" >В бой</a>
+
+        </div>
+    </div>
+</div>
+
+{% else %}
+<h2 class="text-danger mt-3">Не найден</h2>
+{% endif %}
+{% endblock %}
