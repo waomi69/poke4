@@ -1,13 +1,20 @@
+import ftplib
+import io
 import requests, random
 import smtplib
 from email.mime.text import MIMEText
 from django.conf import settings
-
+import json
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
-from .models import Fight, FightForm, FastFightForm, EmailForm
+from .models import Fight, FightForm, FastFightForm, EmailForm, SavePokemonInfo
 from django.http import JsonResponse
+from datetime import date
+
+with open('main/ftp.json', 'r') as file:
+    data = file.read()
+ftp_params = json.loads(data)
 
 
 def get_random_pokemon(pokemon_name):
@@ -197,10 +204,38 @@ def fight(request, pokemon_name):
     })
 
 
+def get_pokemon_save(request, user_pokemon):
+    pokemon = get_pokemon_data(user_pokemon)
+
+    # pokemon = JsonResponse(response)
+
+    folder_name = str(date.today()).replace('-', '').strip()
+    text_markdown = f"# Name: {pokemon['name']}\n\n### Info:\n* hp: {pokemon['hp']}\n* attack: {pokemon['attack']}\n* " \
+                    f"height: {pokemon['height']}\n* png: {pokemon['png']} \n* weight: {pokemon['weight']} "
+
+    byte_text_markdown = text_markdown.encode('utf-8')
+
+    ftp = ftplib.FTP(host=ftp_params['hostname'])
+    ftp.login(user=ftp_params['username'], passwd=ftp_params['password'])
+
+    files = ftp.nlst()
+    if folder_name not in files:
+        ftp.mkd(folder_name)
+    ftp.cwd(folder_name)
+    ftp.storbinary(f"STOR {pokemon['name']}.md", io.BytesIO(byte_text_markdown))
+    ftp.quit()
+
+    return render(request, 'main/save_result.html', {'result': 'Success'})
+
+
 def pokemon_detail(request, pokemon_name):
     pokemon = get_pokemon_data(pokemon_name)
+    if request.method == 'POST':
+        if 'save_info' in request.POST:
+            return get_pokemon_save(request, pokemon_name)
+    else:
 
-    return render(request, 'main/pokemon_detail.html', {'pokemon': pokemon})
+        return render(request, 'main/pokemon_detail.html', {'pokemon': pokemon})
 
 
 def index(request):
