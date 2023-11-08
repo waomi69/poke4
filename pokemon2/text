@@ -1,16 +1,17 @@
 import ftplib
 import io
+
 import requests, random
 import smtplib
 from email.mime.text import MIMEText
 from django.conf import settings
 import json
+from datetime import date
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from .models import Fight, FightForm, FastFightForm, EmailForm, SavePokemonInfo
 from django.http import JsonResponse
-from datetime import date
 from django.core.cache import cache
 
 with open('main/ftp.json', 'r') as file:
@@ -205,30 +206,6 @@ def fight(request, pokemon_name):
     })
 
 
-def get_pokemon_save(request, user_pokemon):
-    pokemon = get_pokemon_data(user_pokemon)
-
-    # pokemon = JsonResponse(response)
-
-    folder_name = str(date.today()).replace('-', '').strip()
-    text_markdown = f"# Name: {pokemon['name']}\n\n### Info:\n* hp: {pokemon['hp']}\n* attack: {pokemon['attack']}\n* " \
-                    f"height: {pokemon['height']}\n* png: {pokemon['png']} \n* weight: {pokemon['weight']} "
-
-    byte_text_markdown = text_markdown.encode('utf-8')
-
-    ftp = ftplib.FTP(host=ftp_params['hostname'])
-    ftp.login(user=ftp_params['username'], passwd=ftp_params['password'])
-
-    files = ftp.nlst()
-    if folder_name not in files:
-        ftp.mkd(folder_name)
-    ftp.cwd(folder_name)
-    ftp.storbinary(f"STOR {pokemon['name']}.md", io.BytesIO(byte_text_markdown))
-    ftp.quit()
-
-    return render(request, 'main/save_result.html', {'result': 'Success'})
-
-
 def pokemon_detail(request, pokemon_name):
     # Сначала пробуем получить данные из кэша
     pokemon_detail_cached = cache.get('pokemon_detail' + str(pokemon_name))
@@ -253,7 +230,7 @@ def index(request):
         return render(request, 'main/search.html', {'pokemon': pokemon})
 
     page_number = int(request.GET.get('page', 1))
-    limit = 3  # Количество покемонов на каждой странице
+    limit = 6  # Количество покемонов на каждой странице
     offset = (page_number - 1) * limit
 
     # Сначала пробуем получить данные из кэша
@@ -263,7 +240,7 @@ def index(request):
         all_pokemons_name_cached = get_all_pokemons()
         cache.set('all_pokemons', all_pokemons_name_cached, 3600)  # Кэшировать на 1 час (время в секундах)
 
-    paginator = Paginator(all_pokemons_name_cached, 3)
+    paginator = Paginator(all_pokemons_name_cached, 6)
 
     # Сначала пробуем получить данные из кэша
     pokemon_info_cached = cache.get('pokemon_list' + str(page_number))
@@ -331,7 +308,7 @@ def get_pokemon_data(pokemon_name):
             'weight': data['weight'],
             'abilities': [abilities],
             'height': data['height'],
-            'png': data['sprites']['front_default'],
+            'png': data['sprites']['other']['home']['front_default'],
             'hp': data['stats'][0]['base_stat'],  # Здоровье
             'attack': data['stats'][1]['base_stat'],  # Урон
         }
@@ -564,3 +541,26 @@ def get_fast_fight_result(request):
         "game_winner": winner,
     }
     return JsonResponse(res)
+
+
+def get_pokemon_save(request, user_pokemon):
+    pokemon = get_pokemon_data(user_pokemon)
+
+    # pokemon = JsonResponse(response)
+
+    folder_name = str(date.today()).replace('-', '').strip()
+    text_markdown = f"# Name: {pokemon['name']}\n\n### Info:\n* hp: {pokemon['hp']}\n* attack: {pokemon['attack']}\n* " \
+                    f"abilities: {pokemon['abilities']}\n* png: {pokemon['png']} "
+    byte_text_markdown = text_markdown.encode('utf-8')
+
+    ftp = ftplib.FTP(host=ftp_params['hostname'])
+    ftp.login(user=ftp_params['username'], passwd=ftp_params['password'])
+
+    files = ftp.nlst()
+    if folder_name not in files:
+        ftp.mkd(folder_name)
+    ftp.cwd(folder_name)
+    ftp.storbinary(f"STOR {pokemon['name']}.md", io.BytesIO(byte_text_markdown))
+    ftp.quit()
+
+    return render(request, 'main/save_result.html', {'result': 'Success'})
