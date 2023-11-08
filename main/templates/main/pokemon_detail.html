@@ -29,6 +29,12 @@
                     {{ abilities_string }}
                 </p>
                 <a href="{% url 'fight' pokemon.name %}" >В бой</a>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ SavePokemonInfo.as_p }}
+                    <button type="submit" name="save_info">Сохранить информацию о покемоне
+                    </button>
+                </form>
             </div>
         </div>
     </div>

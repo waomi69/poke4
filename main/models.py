@@ -13,7 +13,6 @@ class FightForm(forms.Form):
 
 
 class FastFightForm(forms.Form):
-
     pass
 
 
@@ -22,6 +21,10 @@ class EmailForm(forms.Form):
                              required=True,
                              widget=forms.TextInput(
                                  attrs={'class': 'form-control', 'placeholder': 'Ваш адрес электронной почты'}))
+
+
+class SavePokemonInfo(forms.Form):
+    pass
 
 
 class Fight(models.Model):

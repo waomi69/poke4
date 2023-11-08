@@ -11,4 +11,5 @@ urlpatterns = [
     path('api/fight/', views.get_fight_info, name='fight_info'),
     path('api/fight/<int:number>/', views.update_pokemon_data, name='update_pokemon_data'),
     path('api/fight/fast/', views.get_fast_fight_result, name='fast_fight_result'),
+    path('api/save/<pokemon_name>', views.get_pokemon_save, name='fast_fight_result')
 ]
