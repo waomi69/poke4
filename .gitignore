@@ -6,3 +6,6 @@ main/ftp.json
 .idea/workspace.xml
 .env.local
 .env.docker
+!/.env.local
+*.xml
+*.pyc

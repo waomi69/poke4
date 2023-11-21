@@ -99,8 +99,8 @@ CACHES = {
 
 MY_EMAIL = os.environ.get('MAIL_EMAIL')
 MY_EMAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-MY_EMAIL_SERVER = os.environ.get('MAIL_SERVER')
-MY_EMAIL_PORT = os.environ.get('MAIL_PORT')
+EMAIL_SERVER = os.environ.get('MAIL_SERVER')
+EMAIL_PORT = os.environ.get('MAIL_PORT')
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

@@ -347,11 +347,11 @@ def send_email(subject, message, to_email):
     # Создание объекта MIMEText для сообщения
     msg = MIMEText(message)
     msg['Subject'] = subject
-    msg['From'] = sender  # Замените на ваш email
+    msg['From'] = sender
     msg['To'] = to_email
 
     # SMTP-сервер и порт (для Gmail)
-    server = smtplib.SMTP(str(settings.MAIL_SERVER), settings.MAIL_PORT)
+    server = smtplib.SMTP(str(settings.EMAIL_SERVER), settings.EMAIL_PORT)
 
     # защищенное соединение
     server.starttls()
