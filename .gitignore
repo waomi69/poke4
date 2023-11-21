@@ -1,1 +1,8 @@
-/main/ftp.json
+pokemon2/settings.py
+venv/
+__pycache__/
+.idea/
+main/ftp.json
+.idea/workspace.xml
+.env.local
+.env.docker

@@ -351,7 +351,7 @@ def send_email(subject, message, to_email):
     msg['To'] = to_email
 
     # SMTP-сервер и порт (для Gmail)
-    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server = smtplib.SMTP(str(settings.MAIL_SERVER), settings.MAIL_PORT)
 
     # защищенное соединение
     server.starttls()

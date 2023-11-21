@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 
+from os import environ
+from dotenv import load_dotenv
+
+# load_dotenv(dotenv_path=".env.docker")
+load_dotenv(dotenv_path=".env.local")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -19,12 +25,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)d4l75$afy&4k4l2zw)3nc*r2(nl)c31c!$g+n4@$vvyim4gfq'
+#SECRET_KEY = 'django-insecure-)d4l75$afy&4k4l2zw)3nc*r2(nl)c31c!$g+n4@$vvyim4gfq'
+SECRET_KEY = environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = environ.get('DEBUG') == "True"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [environ.get('ALLOWED_HOSTS'), 'localhost', 'poke_app']
 
 # Application definition
 
@@ -75,23 +82,25 @@ WSGI_APPLICATION = 'pokemon2.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'pokemonslog',
-        'USER': 'postgres',
-        'PASSWORD': '8567',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        "NAME": environ.get('DB_NAME'),
+        "USER": environ.get('DB_USERNAME'),
+        "PASSWORD": environ.get('DB_PASSWORD'),
+        "HOST": environ.get('DB_HOST'),
+        "PORT": environ.get('DB_PORT'),
     }
 }
 
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'LOCATION': f"{environ.get('CACHE_TYPE')}://{environ.get('CACHE_REDIS_HOST')}:{environ.get('CACHE_REDIS_PORT')}/{environ.get('CACHE_REDIS_DB')}",
     }
 }
 
-MY_EMAIL = 'kuldarevilya9@gmail.com'
-MY_EMAIL_PASSWORD = 'ynnoaiwcjofphwqj'
+MY_EMAIL = os.environ.get('MAIL_EMAIL')
+MY_EMAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+MY_EMAIL_SERVER = os.environ.get('MAIL_SERVER')
+MY_EMAIL_PORT = os.environ.get('MAIL_PORT')
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
