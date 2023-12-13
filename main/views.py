@@ -205,15 +205,14 @@ def fight(request, pokemon_name):
     })
 
 
-def get_pokemon_save(request, user_pokemon):
-    pokemon = get_pokemon_data(user_pokemon)
+def get_pokemon_save(request, pokemon_name):
+    pokemon = get_pokemon_data(pokemon_name)
 
     # pokemon = JsonResponse(response)
 
     folder_name = str(date.today()).replace('-', '').strip()
     text_markdown = f"# Name: {pokemon['name']}\n\n### Info:\n* hp: {pokemon['hp']}\n* attack: {pokemon['attack']}\n* " \
-                    f"height: {pokemon['height']}\n* png: {pokemon['png']} \n* weight: {pokemon['weight']} "
-
+                    f"abilities: {pokemon['abilities']}\n* png: {pokemon['png']} "
     byte_text_markdown = text_markdown.encode('utf-8')
 
     ftp = ftplib.FTP(host=ftp_params['hostname'])
